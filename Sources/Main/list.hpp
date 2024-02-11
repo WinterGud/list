@@ -15,15 +15,15 @@ public:
     void push_back(const T& elem);
     T& last()
     {
-        return m_lastNode->m_item;
+        return m_lastNode->item;
     }
     
 private:
     struct node
     {
-        node* m_nextNode;
-        node* m_previousNode;
-        T m_item;
+        node* nextNode;
+        node* previousNode;
+        T item;
         node();
     };
 
@@ -35,40 +35,46 @@ private:
 
 template <typename T>
 list<T>::list()
-    : m_size(0), m_beginNode(nullptr), m_lastNode(nullptr)
+    : m_size(0),
+      m_beginNode(nullptr),
+      m_lastNode(nullptr)
 {
 }
 
 template <typename T>
 list<T>::list(int size)
-    : m_size(size), m_lastNode(nullptr), m_beginNode(nullptr)
+    : m_size(0),
+      m_beginNode(nullptr),
+      m_lastNode(nullptr)
 {
-    node newNode = new node;
-    newNode.m_item = 0;
+    for (int i = 0; i < size; i++)
+    {
+        this->push_back(0);
+    }
 }
 
 template <typename T>
 void list<T>::push_back(const T& elem)
 {
+    node* newNode = new node;
+    newNode->item = elem;
+    newNode->previousNode = m_lastNode;
+    
     if(m_size == 0)
     {
-        node* newNode = new node;
-        newNode->m_item = elem;
-        newNode->m_previousNode = m_lastNode;
-        m_lastNode = newNode;
         m_beginNode = newNode;
     }
     else
     {
-        node* newNode = new node;
-        newNode->m_item = elem;
-        newNode->m_previousNode = m_lastNode;
-        m_lastNode = newNode;
+        m_lastNode->nextNode = newNode;
     }
+    m_lastNode = newNode;
+    m_size++;
 }
 
 template <typename T>
 list<T>::node::node()
-    : m_nextNode(nullptr), m_previousNode(nullptr)
+    : nextNode(nullptr),
+      previousNode(nullptr)
 {
 }

@@ -6,9 +6,9 @@
 int main()
 {
 
-	list<int> l1;
-	l1.push_back(4);
-	std::cout << l1.last();
+	list<int> l1(6);
+	for(int i = 0; i < l1.size(); i++)
+	std::cout << l1.last() << '\t';
 	
 
 	return 0;
