@@ -6,9 +6,10 @@
 int main()
 {
 
-	list<int> l1(6);
-	for(int i = 0; i < l1.size(); i++)
-	std::cout << l1.last() << '\t';
+	std::list<int> l1(6);
+	list<int>::iterator it;
+
+	std::cout << it;
 	
 
 	return 0;
