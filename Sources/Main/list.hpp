@@ -22,9 +22,13 @@ public:
         ~iterator();
 
         iterator& operator=(const iterator& right);
-        bool operator==(const iterator& right);
-        bool operator!=(const iterator& right);
-
+        bool operator==(const iterator& right) const;
+        bool operator!=(const iterator& right) const;
+        iterator& operator++(T);
+        iterator& operator--(T);
+        iterator& operator++();
+        iterator& operator--();
+        friend void erase(const iterator&);
         friend std::ostream& operator<<(std::ostream& os, const iterator& it)
         {
             os << it.m_node->item;
@@ -33,12 +37,17 @@ public:
 
     private:
         node* m_node;
+        
     };
 
     int size() const { return m_size; }
     void push_back(const T& elem);
+    void pop_back();
     iterator& begin();
     iterator& end();
+    void insert(const iterator& it, const T& val);
+    void erase(const iterator& it);
+    
 
     T& front();
     T& back();
@@ -82,7 +91,7 @@ list<T>::list(int size)
 template <typename T>
 list<T>::~list()
 {
-    
+    std::cout << "destructor (list);\n";
 }
 
 template <typename T>
@@ -126,7 +135,7 @@ typename list<T>::iterator& list<T>::iterator::operator=(const iterator& right)
 }
 
 template <typename T>
-bool list<T>::iterator::operator==(const iterator& right)
+bool list<T>::iterator::operator==(const iterator& right) const
 {
     if (m_node->item != right.m_node->item ||
         m_node->previousNode != right.m_node->previousNode ||
@@ -138,9 +147,62 @@ bool list<T>::iterator::operator==(const iterator& right)
 }
 
 template <typename T>
-bool list<T>::iterator::operator!=(const iterator& right)
+bool list<T>::iterator::operator!=(const iterator& right) const
 {
-    return !(this == right);
+    if (m_node->item == right.m_node->item ||
+        m_node->previousNode == right.m_node->previousNode ||
+        m_node->nextNode == right.m_node->nextNode)
+    {
+        return false;
+    }
+    return true;
+}
+
+template <typename T>
+typename list<T>::iterator& list<T>::iterator::operator++(T)
+{
+    if(m_node->nextNode == nullptr)
+    {
+        throw "error";
+    }
+    iterator temp(m_node);
+    this->operator++();
+    return std::move(temp);
+}
+
+
+template <typename T>
+typename list<T>::iterator& list<T>::iterator::operator--(T)
+{
+    if(m_node->previousNode == nullptr)
+    {
+        throw "error";
+    }
+    iterator temp(m_node);
+    this->operator--();
+    return std::move(temp);
+}
+
+template <typename T>
+typename list<T>::iterator& list<T>::iterator::operator++()
+{
+    if(m_node->nextNode == nullptr)
+    {
+        throw "error";
+    }
+    m_node = m_node->nextNode;
+    return *this;
+}
+
+template <typename T>
+typename list<T>::iterator& list<T>::iterator::operator--()
+{
+    if(m_node->previousNode == nullptr)
+    {
+        throw "error";
+    }
+    m_node = m_node->previousNode;
+    return *this;
 }
 
 template <typename T>
@@ -163,10 +225,39 @@ void list<T>::push_back(const T& elem)
 }
 
 template <typename T>
+void list<T>::pop_back()
+{
+    m_lastNode = m_lastNode->previousNode;
+    delete m_lastNode->nextNode;
+    m_size--;
+}
+
+template <typename T>
 typename list<T>::iterator& list<T>::begin()
 {
     iterator temp(m_beginNode);
     return std::move(temp);
+}
+
+template <typename T>
+typename list<T>::iterator& list<T>::end()
+{
+    iterator temp(m_lastNode);
+    return std::move(temp);
+}
+
+template <typename T>
+void list<T>::insert(const iterator& it, const T& val)
+{
+}
+
+template <typename T>
+void list<T>::erase(const iterator& it)
+{
+    node* temp = it.m_node->nextNode;
+    --it;
+    delete it.m_node->nextNode;
+    it.m_node->nextNode = temp;
 }
 
 template <typename T>
@@ -184,6 +275,6 @@ T& list<T>::back()
 template <typename T>
 list<T>::node::node()
     : nextNode(nullptr)
-      , previousNode(nullptr)
+    , previousNode(nullptr)
 {
 }
