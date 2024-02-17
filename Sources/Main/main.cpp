@@ -11,12 +11,13 @@ int main()
 	{
 		l1.push_back(i);
 	}
-	for (auto it = l1.begin(); it != l1.end(); it++)
-	{
-		std::cout << it << '\t';
-	}
-	l1.erase(l1.begin());
-	std::cout << --l1.end();
+	std::cout << l1.size() << '\n';
+	std::cout << *l1.begin() << '\n';
+	
+	l1.insert(l1.begin(), 6);
+	std::cout << l1.size() << '\n';
+	std::cout << l1.front() << '\n';
+	std::cout << *find(l1.begin(), l1.end(), 10) << '\n';
 	
 	return 0;
 }
