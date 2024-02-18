@@ -31,8 +31,9 @@ public:
         iterator& operator--();
         T& operator*();
         friend iterator find(const iterator& itFrom, const iterator& itTo, T& elem);
+        friend iterator partition(const iterator& itFrom, const iterator& itTo);
         friend void sort(const iterator& itFrom, const iterator& itTo);
-
+        
     private:
         node* m_node;
     };
@@ -344,10 +345,26 @@ auto find(const typename list<T>::iterator& itFrom,
 }
 
 template <typename  T>
-auto sort(const typename list<T>::iterator& itFrom,
-          const typename list<T>::iterator& itTo) -> void
+void sort(const typename list<T>::iterator& itFrom,
+          const typename list<T>::iterator& itTo)
 {
-    
+    partition(itFrom, itTo);
+}
+
+template <typename T>
+auto partition(const typename list<T>::iterator& itFrom,
+               const typename list<T>::iterator& itTo) -> typename list<T>::iterator
+{
+    typename list<T>::iterator it(itFrom);
+    while (*it != 0)
+    {
+        if (it == itTo)
+        {
+            return it;
+        }
+        ++it;
+    }
+    return it;
 }
 
 template <typename T>
