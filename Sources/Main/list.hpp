@@ -29,11 +29,79 @@ public:
         iterator& operator--(T);
         iterator& operator++();
         iterator& operator--();
-        T& operator*();
+        T& operator*() const;
         friend iterator find(const iterator& itFrom, const iterator& itTo, T& elem);
-        friend iterator partition(const iterator& itFrom, const iterator& itTo);
-        friend void sort(const iterator& itFrom, const iterator& itTo);
-        
+
+        friend iterator partition(const iterator& itFrom, const iterator& itTo)
+        {
+            iterator pivot = iterator(itFrom);
+
+            int count = 0;
+            for (auto it = ++iterator(itFrom); it != itTo; it++)
+            {
+                if (*it <= *pivot)
+                {
+                    count++;
+                }
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                ++pivot;
+            }
+
+            std::swap(pivot.m_node->item, itFrom.m_node->item);
+
+            iterator i(itFrom), j(itTo);
+            while (i != pivot && j != pivot)
+            {
+                
+                    while (*i <= *pivot)
+                    {
+                        try
+                        {
+                            ++i;
+                        }
+                        catch (const char*)
+                        {
+                            continue;
+                        }
+                    }
+
+                    while (*j > *pivot)
+                    {
+                        try
+                        {
+                            --j;
+                        }
+                        catch (const char*)
+                        {
+                            continue;
+                        }
+                    }
+                
+                if (i != pivot && j != pivot)
+                {
+                    std::swap(i++, j++);
+                }
+            }
+
+            return pivot;
+        }
+
+        friend void sort(const iterator& itFrom, const iterator& itTo)
+        {
+            if (*itFrom >= *itTo)
+            {
+                return;
+            }
+
+            iterator p = partition(itFrom, itTo);
+
+            sort(itFrom, --p);
+            sort(++p, itTo);
+        }
+
     private:
         node* m_node;
     };
@@ -52,7 +120,6 @@ public:
     void remove(const T* elem);
     T& front();
     T& back();
-
 
 private:
     struct node
@@ -132,10 +199,6 @@ list<T>::iterator::~iterator()
 template <typename T>
 typename list<T>::iterator& list<T>::iterator::operator=(const iterator& right)
 {
-    if (this == right)
-    {
-        return *this;
-    }
     m_node->item = right.m_node->item;
     m_node->previousNode = right.m_node->previousNode;
     m_node->nextNode = right.m_node->nextNode;
@@ -211,7 +274,7 @@ typename list<T>::iterator& list<T>::iterator::operator--()
 }
 
 template <typename T>
-T& list<T>::iterator::operator*()
+T& list<T>::iterator::operator*() const
 {
     return m_node->item;
 }
@@ -344,32 +407,15 @@ auto find(const typename list<T>::iterator& itFrom,
     return it;
 }
 
-template <typename  T>
+template <typename T>
 void sort(const typename list<T>::iterator& itFrom,
           const typename list<T>::iterator& itTo)
 {
-    partition(itFrom, itTo);
-}
-
-template <typename T>
-auto partition(const typename list<T>::iterator& itFrom,
-               const typename list<T>::iterator& itTo) -> typename list<T>::iterator
-{
-    typename list<T>::iterator it(itFrom);
-    while (*it != 0)
-    {
-        if (it == itTo)
-        {
-            return it;
-        }
-        ++it;
-    }
-    return it;
 }
 
 template <typename T>
 list<T>::node::node()
     : nextNode(nullptr)
-    , previousNode(nullptr)
+      , previousNode(nullptr)
 {
 }

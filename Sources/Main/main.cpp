@@ -12,8 +12,9 @@ int main()
 		l1.push_back(i);
 	}
 
-	partition(l1.begin(), l1.end());
-	find(l1.begin(), l1.end(), 2);
+	sort(l1.begin(), l1.end());
+	
 	
 	return 0;
 }
+} 
