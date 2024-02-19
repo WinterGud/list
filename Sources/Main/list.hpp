@@ -14,7 +14,7 @@ public:
 
     class iterator
     {
-        friend class list<T>;
+        friend class list;
 
     public:
         iterator();
@@ -117,7 +117,7 @@ public:
     void erase(const iterator& it);
     bool empty();
     void clear();
-    void remove(const T* elem);
+    void remove(const T& elem);
     T& front();
     T& back();
 
@@ -221,9 +221,7 @@ bool list<T>::iterator::operator==(const iterator& right) const
 template <typename T>
 bool list<T>::iterator::operator!=(const iterator& right) const
 {
-    if (m_node->item == right.m_node->item ||
-        m_node->previousNode == right.m_node->previousNode ||
-        m_node->nextNode == right.m_node->nextNode)
+    if (m_node == right.m_node)
     {
         return false;
     }
@@ -242,10 +240,6 @@ typename list<T>::iterator& list<T>::iterator::operator++(T)
 template <typename T>
 typename list<T>::iterator& list<T>::iterator::operator--(T)
 {
-    if (m_node->previousNode == nullptr)
-    {
-        throw "error";
-    }
     iterator temp(m_node);
     m_node = m_node->previousNode;
     return std::move(temp);
@@ -254,10 +248,6 @@ typename list<T>::iterator& list<T>::iterator::operator--(T)
 template <typename T>
 typename list<T>::iterator& list<T>::iterator::operator++()
 {
-    if (m_node->nextNode == nullptr)
-    {
-        throw "error";
-    }
     m_node = m_node->nextNode;
     return *this;
 }
@@ -265,10 +255,6 @@ typename list<T>::iterator& list<T>::iterator::operator++()
 template <typename T>
 typename list<T>::iterator& list<T>::iterator::operator--()
 {
-    if (m_node->previousNode == nullptr)
-    {
-        throw "error";
-    }
     m_node = m_node->previousNode;
     return *this;
 }
@@ -335,7 +321,7 @@ typename list<T>::iterator list<T>::begin()
 template <typename T>
 typename list<T>::iterator list<T>::end()
 {
-    iterator temp(m_lastNode);
+    iterator temp(m_lastNode->nextNode);
     return temp;
 }
 
@@ -376,6 +362,31 @@ template <typename T>
 bool list<T>::empty()
 {
     return m_size == 0;
+}
+
+template <typename T>
+void list<T>::clear()
+{
+    node* temp = m_lastNode;
+    while (m_beginNode != nullptr)
+    {
+        temp = m_beginNode;
+        m_beginNode = m_beginNode->nextNode;
+        delete temp;
+    }
+}
+
+template <typename T>
+void list<T>::remove(const T& elem)
+{
+    
+    for (iterator it : this)
+    {
+        if(*it == elem)
+        {
+            erase(it);
+        }
+    }
 }
 
 template <typename T>

@@ -12,7 +12,16 @@ int main()
 		l1.push_back(i);
 	}
 
-	sort(l1.begin(), l1.end());
+	for (auto it = l1.begin(); it != l1.end(); it++)
+	{
+		std::cout << *it << '\n';
+	}
+
+	for (auto it : l1)
+	{
+		std::cout << it << '\n';
+	}
+	l1.clear();
 	
 	
 	return 0;
